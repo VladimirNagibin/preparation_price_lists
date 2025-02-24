@@ -1,0 +1,8 @@
+services:
+  converter:
+    volumes:
+      - ./converter/src:/opt/app
+    env_file:
+      - ./.env/.env.converter.example
+    ports:
+     - 8090:8000
