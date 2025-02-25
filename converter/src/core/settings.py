@@ -13,6 +13,7 @@ class Settings(BaseSettings):
     )
     PROJECT_NAME: str = "project"
     APP_RELOAD: bool = False
+    
     BASE_DIR: str = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 

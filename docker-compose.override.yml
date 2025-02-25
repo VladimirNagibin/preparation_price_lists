@@ -6,3 +6,7 @@ services:
       - ./.env/.env.converter.example
     ports:
      - 8090:8000
+
+  redis:
+    ports:
+     - 6379:6379

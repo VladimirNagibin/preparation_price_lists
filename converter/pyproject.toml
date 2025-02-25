@@ -13,6 +13,7 @@ pydantic-settings = "2.6.1"
 xlwt = "1.3.0"
 pandas = "1.5.3"
 redis = "5.0.4"
+aiofile = "3.9.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "^24.10.0"
