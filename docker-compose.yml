@@ -6,4 +6,4 @@ services:
 
   redis:
     image: redis:alpine3.20
-    command: redis-server
+    command: redis-server --notify-keyspace-events AKE

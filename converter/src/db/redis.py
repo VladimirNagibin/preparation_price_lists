@@ -21,11 +21,6 @@ class RedisClient:
     async def sadd(self, name: Any, values: Any) -> None:
         await self.redis.sadd(name, values)
 
-    async def check_invalid_token(
-        self, name: str = "invalid_token", value: Any = None
-    ) -> bool:
-        return await self.redis.sismember(name, value)
-
 
 async def get_redis() -> RedisClient:
     return RedisClient(redis)
