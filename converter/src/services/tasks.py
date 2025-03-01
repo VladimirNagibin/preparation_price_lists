@@ -6,6 +6,7 @@ from redis.asyncio.client import PubSub
 from redis.asyncio.client import Redis as ClientRedis
 
 from core.settings import settings
+from core.logger import logger
 from db.redis import RedisClient, get_redis
 from services.converter_files import convert_xlsx_to_xls
 
@@ -54,3 +55,7 @@ async def listen_to_redis_events():
                 await delete_file_async(file_path % ("in"))
             elif channel == "__keyevent@0__:expired":
                 await delete_file_async(file_path % ("out"))
+
+async def clear_files():
+    logger.info("clear files 777")
+    print("clear files 777")

@@ -1,11 +1,6 @@
 import os
-from logging import config as logging_config
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
-
-from core.logger import LOGGING
-
-logging_config.dictConfig(LOGGING)
 
 
 class Settings(BaseSettings):
@@ -20,8 +15,11 @@ class Settings(BaseSettings):
     TTL: int = 60 * 60 * 6  # TTL in seconds
     CHUNK: int = 1024
     BASE_DIR: str = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    LOG_LEVEL: str = "INFO"
     LOAD: int = 0
     CONVERTED: int = 1
+    LOGSTASH_HOST: str = "localhost"
+    LOGSTASH_PORT: int = 5044    
 
 
 settings = Settings()
