@@ -56,6 +56,39 @@ async def listen_to_redis_events():
             elif channel == "__keyevent@0__:expired":
                 await delete_file_async(file_path % ("out"))
 
+
+async def delete_files_by_condition(folder_path: str, condition):
+    """
+    Асинхронно проходит по файлам в папке и удаляет их, если они удовлетворяют условию.
+    
+    :param folder_path: Путь к папке.
+    :param condition: Функция-условие, которая принимает имя файла и возвращает bool.
+    """
+    try:
+        # Получаем список файлов в папке
+        files = await aios.listdir(folder_path)
+        
+        # Асинхронно обрабатываем каждый файл
+        for file_name in files:
+            file_path = os.path.join(folder_path, file_name)
+            
+            # Проверяем, является ли объект файлом
+            if await aios.path.isfile(file_path):
+                # Проверяем условие
+                if condition(file_name):
+                    print(f"Удаление файла: {file_path}")
+                    await aios.remove(file_path)
+    except Exception as e:
+        print(f"Ошибка при обработке файлов: {e}")
+
+
+
 async def clear_files():
-    logger.info("clear files 777")
-    print("clear files 777")
+    redis: RedisClient = await get_redis()
+    file_path = os.path.join(settings.BASE_DIR, settings.UPLOAD_DIR, "%s")
+
+    await delete_files_by_condition(file_path % ("in"), redis.exists)
+    await delete_files_by_condition(file_path % ("out"), redis.exists)
+    
+    #logger.info("clear files")
+    #print("clear files 777")

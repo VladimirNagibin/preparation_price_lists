@@ -18,6 +18,9 @@ class RedisClient:
     async def delete(self, name: Any) -> None:
         await self.redis.delete(name)
 
+    async def exists(self, name: Any) -> bool:
+        return await self.redis.exists(name)
+
     async def sadd(self, name: Any, values: Any) -> None:
         await self.redis.sadd(name, values)
 
