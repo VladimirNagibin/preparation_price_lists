@@ -10,7 +10,7 @@ from fastapi.responses import ORJSONResponse
 from redis.asyncio import Redis
 
 from api.v1.upload_files import upload_file_router
-from core.logger import LOGGING  # , logger
+from core.logger import LOGGING, logger
 from core.settings import settings
 from db import redis
 from services.tasks import clear_files, listen_to_redis_events
