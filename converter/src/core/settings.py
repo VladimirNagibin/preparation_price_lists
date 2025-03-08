@@ -4,10 +4,8 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(
-        env_file=".env", env_file_encoding="utf-8"
-    )
-    PROJECT_NAME: str = "project"
+    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
+    PROJECT_NAME: str = "converter"
     APP_RELOAD: bool = True
     REDIS_HOST: str = "redis"
     REDIS_PORT: int = 6379
@@ -19,7 +17,8 @@ class Settings(BaseSettings):
     LOAD: int = 0
     CONVERTED: int = 1
     LOGSTASH_HOST: str = "localhost"
-    LOGSTASH_PORT: int = 5044    
+    LOGSTASH_PORT: int = 5044
+    LOGSTASH_HANDLER: bool = True
 
 
 settings = Settings()

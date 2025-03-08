@@ -63,9 +63,7 @@ async def get_file(
     """
     Асинхронно получает файл с сервера.
     """
-    file_path = os.path.join(
-        settings.BASE_DIR, settings.UPLOAD_DIR, "out", str(id)
-    )
+    file_path = os.path.join(settings.BASE_DIR, settings.UPLOAD_DIR, "out", str(id))
     if not os.path.exists(file_path):
         raise HTTPException(
             status_code=HTTPStatus.BAD_REQUEST,

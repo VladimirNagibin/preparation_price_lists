@@ -1,4 +1,5 @@
 import logging
+import sys
 from typing import Any
 
 from logstash_async.handler import AsynchronousLogstashHandler
@@ -67,15 +68,17 @@ logging.config.dictConfig(config=LOGGING)
 logger = logging.getLogger("converter")
 
 logger.setLevel(settings.LOG_LEVEL)
-
-logstash_handler = AsynchronousLogstashHandler(
-    host=settings.LOGSTASH_HOST,
-    port=settings.LOGSTASH_PORT,
-    database_path=None,
-    transport="logstash_async.transport.UdpTransport",
-    ssl_enable=False,
-    ssl_verify=False,
-    retry_delay=5,
-    max_retries=3,
-)
-logger.addHandler(logstash_handler)
+handler = logging.StreamHandler(stream=sys.stdout)
+logger.addHandler(handler)
+if settings.LOGSTASH_HANDLER:
+    logstash_handler = AsynchronousLogstashHandler(
+        host=settings.LOGSTASH_HOST,
+        port=settings.LOGSTASH_PORT,
+        database_path=None,
+        transport="logstash_async.transport.UdpTransport",
+        ssl_enable=False,
+        ssl_verify=False,
+        retry_delay=5,
+        max_retries=3,
+    )
+    logger.addHandler(logstash_handler)

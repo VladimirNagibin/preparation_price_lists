@@ -23,17 +23,18 @@ async def lifespan(app: FastAPI):
     redis.redis = Redis(host=settings.REDIS_HOST, port=settings.REDIS_PORT)
     task = asyncio.create_task(listen_to_redis_events())
     scheduler.add_job(
-            clear_files,
-            trigger=IntervalTrigger(minutes=1),
-            id='clear_files',
-            replace_existing=True
-        )
+        clear_files,
+        trigger=IntervalTrigger(minutes=60),
+        id="clear_files",
+        replace_existing=True,
+    )
     scheduler.start()
     yield
     await redis.redis.close()
     task.cancel()
     await task
     scheduler.shutdown()
+
 
 app = FastAPI(
     title=settings.PROJECT_NAME,

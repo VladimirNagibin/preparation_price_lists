@@ -7,12 +7,14 @@ client = TestClient(app)
 
 UPLOAD_DIR = "uploads"
 
+
 @pytest.fixture(autouse=True)
 def cleanup_upload_dir():
     # Очистка папки uploads перед каждым тестом
     if os.path.exists(UPLOAD_DIR):
         for file_name in os.listdir(UPLOAD_DIR):
             os.remove(os.path.join(UPLOAD_DIR, file_name))
+
 
 def test_upload_file():
     # Создаем тестовый файл
@@ -30,6 +32,7 @@ def test_upload_file():
     with open(file_path, "rb") as f:
         assert f.read() == file_content
 
+
 def test_download_file():
     # Создаем тестовый файл
     file_content = b"Test file content"
@@ -41,6 +44,7 @@ def test_download_file():
     response = client.get("/download/test_file.txt")
     assert response.status_code == 200
     assert response.content == file_content
+
 
 def test_download_nonexistent_file():
     # Пытаемся скачать несуществующий файл
