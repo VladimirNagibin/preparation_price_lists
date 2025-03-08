@@ -9,6 +9,7 @@ services:
     command: redis-server --notify-keyspace-events AKE
 
   logstash:
+    profiles: ["exclude"]
     image: logstash:8.10.2
     depends_on:
       - elasticsearch
@@ -16,13 +17,13 @@ services:
       XPACK_MONITORING_ENABLED: "false"
       ES_HOST: "elasticsearch:9200"
     ports:
-      #- "5044:5044"
       - "5044:5044/udp"
     volumes:
       - ./deploy/logstash.conf:/config/logstash.conf:ro
     command: logstash -f /config/logstash.conf 
 
   elasticsearch:
+    profiles: ["exclude"]
     image: elasticsearch:8.10.2
     environment:
       - discovery.type=single-node
@@ -34,6 +35,7 @@ services:
       - ./deploy/esdata:/usr/share/elasticsearch/data
 
   kibana:
+    profiles: ["exclude"]
     image: kibana:8.10.2
     ports:
       - "5601:5601"

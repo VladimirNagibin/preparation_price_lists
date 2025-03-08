@@ -18,7 +18,9 @@ async def convert_xlsx_to_xls(file_name: str) -> None:
     """
     pd.set_option("io.excel.xls.writer", "xlwt")
 
-    file = os.path.join(settings.BASE_DIR, settings.UPLOAD_DIR, "%s", file_name)
+    file = os.path.join(
+        settings.BASE_DIR, settings.UPLOAD_DIR, "%s", file_name
+    )
     input_file = file % ("in")
     output_file = file % ("out")
     if not await aios.path.exists(input_file):

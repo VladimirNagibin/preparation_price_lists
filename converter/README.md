@@ -1,5 +1,7 @@
 # converter
 
+
+
 Kibana: Management → Stack Management → Data Views <<Create data view>>.
 
 Index pattern "logs-*"

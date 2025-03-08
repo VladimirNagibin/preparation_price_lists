@@ -5,8 +5,8 @@ import redis.asyncio as asyncio_redis
 from redis.asyncio.client import PubSub
 from redis.asyncio.client import Redis as ClientRedis
 
-from core.settings import settings
 from core.logger import logger
+from core.settings import settings
 from db.redis import RedisClient, get_redis
 from services.converter_files import convert_xlsx_to_xls
 
@@ -39,7 +39,9 @@ async def listen_to_redis_events():
         if message and message["type"] == "pmessage":
             channel = message["channel"].decode("utf-8")
             key = message["data"].decode("utf-8")
-            file_path = os.path.join(settings.BASE_DIR, settings.UPLOAD_DIR, "%s", key)
+            file_path = os.path.join(
+                settings.BASE_DIR, settings.UPLOAD_DIR, "%s", key
+            )
             try:
                 value = await redis.get(name=key)
                 value = int(value.decode("utf-8"))
@@ -47,7 +49,9 @@ async def listen_to_redis_events():
                 value = None
             if channel == "__keyevent@0__:set" and value == settings.LOAD:
                 await convert_xlsx_to_xls(key)
-                await redis.set(name=key, value=settings.CONVERTED, ex=settings.TTL)
+                await redis.set(
+                    name=key, value=settings.CONVERTED, ex=settings.TTL
+                )
                 await delete_file_async(file_path % ("in"))
             elif channel == "__keyevent@0__:expired":
                 await delete_file_async(file_path % ("out"))
@@ -55,10 +59,12 @@ async def listen_to_redis_events():
 
 async def delete_files_by_condition(folder_path: str, condition):
     """
-    Асинхронно проходит по файлам в папке и удаляет их, если они удовлетворяют условию.
+    Асинхронно проходит по файлам в папке и удаляет их,
+    если они удовлетворяют условию.
 
     :param folder_path: Путь к папке.
-    :param condition: Функция-условие, которая принимает имя файла и возвращает bool.
+    :param condition: Функция-условие,
+    которая принимает имя файла и возвращает bool.
     """
     try:
         # Получаем список файлов в папке
@@ -85,5 +91,5 @@ async def clear_files():
     await delete_files_by_condition(file_path % ("in"), redis.exists)
     await delete_files_by_condition(file_path % ("out"), redis.exists)
 
-    # logger.info("clear files")
+    logger.info("clear files")
     # print("clear files 777")
