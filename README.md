@@ -5,4 +5,4 @@ preparation of price lists
 
 - Перед запуском, нужно прописать ```sudo sysctl -w vm.max_map_count=262144```
 
-- Запуск вместе с  ELK ```docker compose --profile exclude up``` 
+- Запуск вместе с  ELK ```docker compose --profile exclude up```

@@ -1,8 +1,10 @@
 import logging
+from logging import config
+import logging.config
 import sys
 from typing import Any
 
-from logstash_async.handler import AsynchronousLogstashHandler
+from logstash_async.handler import AsynchronousLogstashHandler  # type: ignore
 
 from core.settings import settings
 
@@ -67,7 +69,7 @@ LOGGING: dict[str, Any] = {
 }
 
 
-logging.config.dictConfig(config=LOGGING)
+config.dictConfig(config=LOGGING)
 logger = logging.getLogger("converter")
 
 logger.setLevel(settings.LOG_LEVEL)

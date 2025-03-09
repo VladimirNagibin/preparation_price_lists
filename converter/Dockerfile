@@ -17,7 +17,7 @@ RUN apt-get update && apt-get install -y \
 
 RUN python -m pip install --no-cache-dir poetry==2.0.1 \
     && poetry config virtualenvs.create false \
-    && poetry install --no-interaction --no-ansi \ 
+    && poetry install --no-interaction --no-ansi \
     && rm -rf $(poetry config cache-dir)/{cache,artifacts}
 
 COPY ./src /opt/app

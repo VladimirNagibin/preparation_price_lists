@@ -1,4 +1,5 @@
 import os
+from typing import Any, Awaitable, Callable
 
 import aiofiles.os as aios
 import redis.asyncio as asyncio_redis
@@ -7,11 +8,11 @@ from redis.asyncio.client import Redis as ClientRedis
 
 from core.logger import logger
 from core.settings import settings
-from db.redis import RedisClient, get_redis
+from db.redis_client import RedisClient, get_redis
 from services.converter_files import convert_xlsx_to_xls
 
 
-async def delete_file_async(file_path: str):
+async def delete_file_async(file_path: str) -> None:
     try:
         # Проверяем, существует ли файл
         if not await aios.path.exists(file_path):
@@ -25,7 +26,7 @@ async def delete_file_async(file_path: str):
         print(f"Ошибка при удалении файла {file_path}: {e}")
 
 
-async def listen_to_redis_events():
+async def listen_to_redis_events() -> None:
     redis: RedisClient = await get_redis()
     client: ClientRedis = asyncio_redis.from_url(
         f"redis://{settings.REDIS_HOST}:{settings.REDIS_PORT}"
@@ -57,7 +58,10 @@ async def listen_to_redis_events():
                 await delete_file_async(file_path % ("out"))
 
 
-async def delete_files_by_condition(folder_path: str, condition):
+async def delete_files_by_condition(
+    folder_path: str,
+    condition: Callable[[Any], Awaitable[Any]],
+) -> None:
     """
     Асинхронно проходит по файлам в папке и удаляет их,
     если они удовлетворяют условию.
@@ -84,12 +88,12 @@ async def delete_files_by_condition(folder_path: str, condition):
         print(f"Ошибка при обработке файлов: {e}")
 
 
-async def clear_files():
+async def clear_files() -> None:
+    logger.info("start clear files")
     redis: RedisClient = await get_redis()
     file_path = os.path.join(settings.BASE_DIR, settings.UPLOAD_DIR, "%s")
 
     await delete_files_by_condition(file_path % ("in"), redis.exists)
     await delete_files_by_condition(file_path % ("out"), redis.exists)
 
-    logger.info("clear files")
-    # print("clear files 777")
+    logger.info("finish clear files")

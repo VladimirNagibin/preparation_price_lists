@@ -1,6 +1,7 @@
-import os
-import uuid
 from http import HTTPStatus
+import os
+from typing import Any
+import uuid
 
 from fastapi import (
     APIRouter,
@@ -14,7 +15,7 @@ from fastapi.responses import FileResponse
 from pydantic import UUID4
 
 from core.settings import settings
-from db.redis import RedisClient, get_redis
+from db.redis_client import RedisClient, get_redis
 
 upload_file_router = APIRouter()
 
@@ -23,10 +24,10 @@ upload_file_router = APIRouter()
     "/send_convert",
     summary="send file",
     description="Upload file for convert.",
-)
+)  # type: ignore
 async def upload_file(
     file: UploadFile = File(...), redis: RedisClient = Depends(get_redis)
-) -> dict[str, str]:
+) -> dict[str, Any]:
     """
     Асинхронно загружает файл на сервер.
     """
@@ -56,7 +57,7 @@ async def upload_file(
     "/get_convert",
     summary="get file",
     description="Get converted file.",
-)
+)  # type: ignore
 async def get_file(
     id: UUID4, response: Response, redis: RedisClient = Depends(get_redis)
 ) -> FileResponse:

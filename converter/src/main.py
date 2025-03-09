@@ -1,26 +1,29 @@
 import asyncio
-import logging
 from contextlib import asynccontextmanager
+import logging
+from typing import AsyncIterator
 
-import uvicorn
-from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from apscheduler.triggers.interval import IntervalTrigger
+from apscheduler.schedulers.asyncio import AsyncIOScheduler  # type: ignore
+from apscheduler.triggers.interval import IntervalTrigger  # type: ignore
 from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
 from redis.asyncio import Redis
+import uvicorn
 
 from api.v1.upload_files import upload_file_router
 from core.logger import LOGGING
 from core.settings import settings
-from db import redis
+from db import redis_client
 from services.tasks import clear_files, listen_to_redis_events
 
 scheduler = AsyncIOScheduler()
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI):
-    redis.redis = Redis(host=settings.REDIS_HOST, port=settings.REDIS_PORT)
+async def lifespan(app: FastAPI) -> AsyncIterator[None]:
+    redis_client.redis = Redis(
+        host=settings.REDIS_HOST, port=settings.REDIS_PORT
+    )
     task = asyncio.create_task(listen_to_redis_events())
     scheduler.add_job(
         clear_files,
@@ -30,7 +33,7 @@ async def lifespan(app: FastAPI):
     )
     scheduler.start()
     yield
-    await redis.redis.close()
+    await redis_client.redis.close()
     task.cancel()
     await task
     scheduler.shutdown()

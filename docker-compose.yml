@@ -1,6 +1,6 @@
-services: 
+services:
   converter:
-    build: 
+    build:
       context: ./converter
       dockerfile: Dockerfile
 
@@ -20,7 +20,7 @@ services:
       - "5044:5044/udp"
     volumes:
       - ./deploy/logstash.conf:/config/logstash.conf:ro
-    command: logstash -f /config/logstash.conf 
+    command: logstash -f /config/logstash.conf
 
   elasticsearch:
     profiles: ["exclude"]
