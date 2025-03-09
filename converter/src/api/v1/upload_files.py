@@ -13,7 +13,9 @@ from fastapi import (
 )
 from fastapi.responses import FileResponse
 from pydantic import UUID4
+from redis import exceptions as redis_errors
 
+from core.logger import logger
 from core.settings import settings
 from db.redis_client import RedisClient, get_redis
 
@@ -31,6 +33,7 @@ async def upload_file(
     """
     Асинхронно загружает файл на сервер.
     """
+    logger.debug("Start to load file")
     try:
         file_name = str(uuid.uuid4())
         tmp_file_path = os.path.join(
@@ -40,12 +43,21 @@ async def upload_file(
             while chunk := await file.read(settings.CHUNK):
                 buffer.write(chunk)
         await redis.set(name=file_name, value=settings.LOAD, ex=settings.TTL)
-    except Exception as e:  # error details
+    except (FileNotFoundError, PermissionError) as e:
+        logger.error(f"File storage error: {e}")
         raise HTTPException(
-            status_code=HTTPStatus.BAD_REQUEST,
-            detail=f"Ошибка при загрузке файла: {e}",
+            HTTPStatus.INTERNAL_SERVER_ERROR, f"File storage error: {e}"
         )
-
+    except redis_errors.ConnectionError as e:
+        logger.error(f"Redis unavailable: {e}")
+        raise HTTPException(
+            HTTPStatus.INTERNAL_SERVER_ERROR, "Redis unavailable: {e}"
+        )
+    except Exception as e:
+        logger.error(f"Unexpected error: {e}")
+        raise HTTPException(
+            HTTPStatus.INTERNAL_SERVER_ERROR, "Internal error: {e}"
+        )
     return {
         "filename": file.filename,
         "token": file_name,

@@ -1,6 +1,5 @@
 import asyncio
 from contextlib import asynccontextmanager
-import logging
 from typing import AsyncIterator
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler  # type: ignore
@@ -11,7 +10,7 @@ from redis.asyncio import Redis
 import uvicorn
 
 from api.v1.upload_files import upload_file_router
-from core.logger import LOGGING
+from core.logger import LOGGING, logger
 from core.settings import settings
 from db import redis_client
 from services.tasks import clear_files, listen_to_redis_events
@@ -51,11 +50,12 @@ app.include_router(upload_file_router, prefix="/api/v1/files", tags=["files"])
 
 
 if __name__ == "__main__":
+    logger.info("Start app.")
     uvicorn.run(
         "main:app",
         host="0.0.0.0",
         port=8000,
         log_config=LOGGING,
-        log_level=logging.INFO,
+        log_level=settings.LOG_LEVEL.lower(),
         reload=settings.APP_RELOAD,
     )

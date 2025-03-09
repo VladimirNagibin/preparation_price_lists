@@ -1,4 +1,3 @@
-from functools import lru_cache
 from typing import Any
 
 from redis.asyncio import Redis as AsyncioRedis
@@ -33,6 +32,5 @@ class RedisClient:
         return None
 
 
-@lru_cache()
 async def get_redis() -> RedisClient:
     return RedisClient(redis)
